@@ -1,20 +1,21 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { LinksModule } from './links/links.module';
+import { LinkModule } from './links/link.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { dataSourceOptions } from 'db/data-source';
 import { HealthModule } from './health/health.module';
-
+import { LinkAnalyticModule } from './link-analytic/link-analytic.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
-    LinksModule,
+    LinkModule,
     HealthModule,
+    LinkAnalyticModule,
   ],
   controllers: [AppController],
   providers: [AppService],

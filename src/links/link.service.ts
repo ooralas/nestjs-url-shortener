@@ -7,7 +7,7 @@ import { Link } from './entities/link.entity';
 import { randomBytes } from 'crypto';
 
 @Injectable()
-export class LinksService {
+export class LinkService {
   constructor(
     @InjectRepository(Link) private linkRepository: Repository<Link>,
   ) {}
@@ -38,19 +38,20 @@ export class LinksService {
     });
   }
 
-  async findOneByAlias(alias: string) {
-    const result = await this.linkRepository.findOneBy({ alias });
+  async findOneByAliasAndUpdateViews(alias: string) {
+    const link = await this.linkRepository.findOneBy({ alias });
 
-    if (!result) {
+    if (!link) {
       throw new NotFoundException();
     }
-    result.views++;
 
-    this.update(result.id, result);
-    return result;
+    link.views++;
+
+    this.linkRepository.save(link);
+    return link;
   }
 
-  async update(id: number, updateLinkDto: UpdateLinkDto) {
+  async updateLink(id: number, updateLinkDto: UpdateLinkDto) {
     const result = await this.linkRepository.update(id, updateLinkDto);
     if (result.affected === 0) {
       throw new NotFoundException();

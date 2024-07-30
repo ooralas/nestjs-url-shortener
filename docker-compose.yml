@@ -1,0 +1,31 @@
+services:
+  nestjs_api:
+    container_name: nestjs_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - '3000:3000'
+    environment:
+      - PORT=3000
+      - NODE_ENV=development
+      - DB_URL=postgresql://root:root@postgres:5432/localdb
+    volumes:
+      - ./src:/usr/src/app/src
+
+  postgres:
+    image: postgres:16.3-alpine
+    container_name: postgres
+    ports:
+      - 20219:5432
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
+      - POSTGRES_DB=localdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

@@ -17,5 +17,9 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
+  },
+  "watchOptions": {
+    // Use a dynanmoic polling instead 0f system's native events for files changes. see https://docs.nestjs.com/faq/common-errors#file-change-detected-loops-endlessly
+    "watchFile": "fixedPollingInterval"
   }
 }

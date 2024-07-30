@@ -12,3 +12,23 @@ A RESTful API for shortening URLs, developed with NestJS. This project includes 
 - URL shortening with unique, secure identifiers
 - Tracking link views
 - Relational database schema for managing users and links
+
+## Usage
+
+This project is Dockerized for both development and production environments. Below are the instructions to set up and run the application using Docker.
+
+### Development Setup
+
+To start the development environment, run the following command in the project root:
+
+```shell
+docker-compose -f docker-compose.yml up --build
+```
+
+### Production Setup
+
+To start the production environment, run the following command in the project root:
+
+```shell
+docker-compose -f docker-compose.prod.yml up --build
+```

@@ -8,12 +8,9 @@ services:
       - postgres
     ports:
       - '3000:3000'
-    environment:
-      - PORT=3000
-      - NODE_ENV=development
-      - DB_URL=postgresql://root:root@postgres:5432/localdb
     volumes:
       - ./src:/usr/src/app/src
+      - ./api-documentation:/usr/src/app/api-documentation
 
   postgres:
     image: postgres:16.3-alpine

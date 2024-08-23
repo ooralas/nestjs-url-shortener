@@ -12,6 +12,7 @@ A RESTful API for shortening URLs, developed with NestJS. This project includes 
 - URL shortening with unique, secure identifiers
 - Tracking link views
 - Relational database schema for managing users and links
+- GeoLocation tracking for IP addresses
 
 ## Usage
 
@@ -57,9 +58,11 @@ To set up the environment variables:
   DB_URL=postgresql://<DB_USER>:<DB_PASSWORD>@<DB_HOST>:<DB_PORT><DB_NAME>
 
   ALIAS_LENGTH=5
+
+  GEO_LOCATION_SERVICE_API_URL=
   ```
 
-This file defines the protocol, host, and port for the API server, among other configuration settings.
+This file defines the protocol, host, and port for the API server, among other configuration settings. Additionally, the `GEO_LOCATION_SERVICE_API_URL` variable must be set to specify the GeoLocation service used to retrieve IP location data. In this Project GeoLocation Service from https://ipapi.co was used.
 
 ## API Documentation
 
@@ -81,3 +84,9 @@ The API documentation can be easily imported into Postman for testing and debugg
 4. Click "Continue" and then "Import"
 
 For detailed instructions on importing Swagger/OpenAPI specifications into Postman, refer to the [official Postman documentation](https://learning.postman.com/docs/getting-started/importing-and-exporting/importing-from-swagger/).
+
+## GeoLocation Service
+
+This project uses the GeoLocation service provided by ipapi.co to track the location of IP addresses. The GeoLocation service is utilized within the analytics module to store geographical data about link visitors.
+
+If a different GeoLocation service is to be used, the `GEO_LOCATION_SERVICE_API_URL` environment variable should be updated accordingly. Additionally, the `createRequestURL` method in the `GeoLocationService` should be modified to match the URL structure and API parameters of the chosen service.

@@ -7,6 +7,8 @@ import { ConfigModule } from '@nestjs/config';
 import { dataSourceOptions } from 'db/data-source';
 import { HealthModule } from './health/health.module';
 import { LinkAnalyticModule } from './link-analytic/link-analytic.module';
+import { GeolocationModule } from './geolocation/geolocation.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -16,6 +18,7 @@ import { LinkAnalyticModule } from './link-analytic/link-analytic.module';
     LinkModule,
     HealthModule,
     LinkAnalyticModule,
+    GeolocationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

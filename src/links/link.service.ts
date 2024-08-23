@@ -30,7 +30,7 @@ export class LinkService {
     return await this.linkRepository.find();
   }
 
-  async findOneById(id: number) {
+  private async findOneById(id: number) {
     return await this.linkRepository.findOne({
       where: {
         id,

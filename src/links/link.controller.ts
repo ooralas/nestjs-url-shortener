@@ -64,13 +64,10 @@ export class LinkController {
   async findOne(@Req() request: Request, @Param('alias') alias: string) {
     const link = await this.linksService.findOneByAliasAndUpdateViews(alias);
 
-    this.linkAnalyticService.findAll();
-
     if (link) {
       await this.linkAnalyticService.createAnalyticForLink(request, link);
     }
 
-    //TODO redirect user to the long link
     return link.longLink;
   }
 

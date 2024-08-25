@@ -8,6 +8,7 @@ import { dataSourceOptions } from 'db/data-source';
 import { HealthModule } from './health/health.module';
 import { LinkAnalyticModule } from './link-analytic/link-analytic.module';
 import { GeolocationModule } from './geolocation/geolocation.module';
+import { CacheManagerModule } from './cache/cache.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { GeolocationModule } from './geolocation/geolocation.module';
     HealthModule,
     LinkAnalyticModule,
     GeolocationModule,
+    CacheManagerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

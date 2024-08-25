@@ -25,6 +25,9 @@ export function generateSwaggerDocument(app: INestApplication): void {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document, {
     jsonDocumentUrl: 'swagger/json',
+    swaggerOptions: {
+      supportedSubmitMethods: [], //disableing try it out button on swagger ui
+    },
   });
 
   const jsonData = JSON.stringify(document);

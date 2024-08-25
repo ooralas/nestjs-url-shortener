@@ -1,15 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Link } from './entities/link.entity';
 import { randomBytes } from 'crypto';
+import { CacheService } from 'src/cache/cache.service';
 
 @Injectable()
 export class LinkService {
   constructor(
     @InjectRepository(Link) private linkRepository: Repository<Link>,
+    @Inject(CacheService) private cacheService: CacheService,
   ) {}
   async create(createLinkDto: CreateLinkDto) {
     const alias = this.generateAlias(+process.env.ALIAS_LENGTH);
@@ -30,7 +32,7 @@ export class LinkService {
     return await this.linkRepository.find();
   }
 
-  private async findOneById(id: number) {
+  async findOneById(id: number) {
     return await this.linkRepository.findOne({
       where: {
         id,
@@ -84,5 +86,21 @@ export class LinkService {
     }
 
     return alias;
+  }
+
+  async getLinkFromCacheOrDatabase(alias: string): Promise<Link | null> {
+    const cachedLink = await this.cacheService.get<Link>(alias);
+    if (cachedLink) {
+      return cachedLink;
+    }
+
+    const link = await this.findOneByAliasAndUpdateViews(alias);
+    if (!link) {
+      throw new NotFoundException('Link not found.');
+    }
+
+    await this.cacheService.set(alias, link);
+
+    return link;
   }
 }

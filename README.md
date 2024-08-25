@@ -13,6 +13,7 @@ A RESTful API for shortening URLs, developed with NestJS. This project includes 
 - Tracking link views
 - Relational database schema for managing users and links
 - GeoLocation tracking for IP addresses
+- Dynamic and configurable caching service
 
 ## Usage
 
@@ -60,6 +61,9 @@ To set up the environment variables:
   ALIAS_LENGTH=5
 
   GEO_LOCATION_SERVICE_API_URL=
+
+  CACHE_TTL=0
+  CACHE_MAX=10000
   ```
 
 This file defines the protocol, host, and port for the API server, among other configuration settings. Additionally, the `GEO_LOCATION_SERVICE_API_URL` variable must be set to specify the GeoLocation service used to retrieve IP location data. In this Project GeoLocation Service from https://ipapi.co was used.
@@ -90,3 +94,9 @@ For detailed instructions on importing Swagger/OpenAPI specifications into Postm
 This project uses the GeoLocation service provided by ipapi.co to track the location of IP addresses. The GeoLocation service is utilized within the analytics module to store geographical data about link visitors.
 
 If a different GeoLocation service is to be used, the `GEO_LOCATION_SERVICE_API_URL` environment variable should be updated accordingly. Additionally, the `createRequestURL` method in the `GeoLocationService` should be modified to match the URL structure and API parameters of the chosen service.
+
+## Caching Service
+
+The project includes a flexible caching service designed to enhance performance during development and testing phases, utilizing an in-memory cache. Although Redis integration is planned for the future, the current implementation is prepared to accommodate Redis as a cache store with minimal changes, ensuring a seamless transition to a more robust and scalable caching solution when the project evolves into production environments.
+
+Configuration of the caching service is managed through environment variables, making it straightforward to adjust parameters such as the cache TTL (`CACHE_TTL`) and the maximum number of cache entries (`CACHE_MAX`). This flexibility ensures that the caching strategy can be optimized based on specific application needs and deployment environments.

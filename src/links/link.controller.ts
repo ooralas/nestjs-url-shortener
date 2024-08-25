@@ -8,7 +8,6 @@ import {
   Delete,
   Req,
   Inject,
-  NotFoundException,
 } from '@nestjs/common';
 import { LinkService } from './link.service';
 import { CreateLinkDto } from './dto/create-link.dto';
@@ -27,6 +26,7 @@ import { Link } from './entities/link.entity';
 @ApiTags('links')
 @Controller('links')
 export class LinkController {
+  cacheService: any;
   constructor(
     private readonly linksService: LinkService,
     @Inject(LinkAnalyticService)
@@ -46,7 +46,7 @@ export class LinkController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Retrieve all links' })
+  @ApiOperation({ summary: 'Retrieve all links.' })
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved links.',
@@ -62,11 +62,9 @@ export class LinkController {
   @ApiResponse({ status: 200, description: 'Successfully retrieved link.' })
   @ApiResponse({ status: 404, description: 'Link not found.' })
   async findOne(@Req() request: Request, @Param('alias') alias: string) {
-    const link = await this.linksService.findOneByAliasAndUpdateViews(alias);
+    const link = await this.linksService.getLinkFromCacheOrDatabase(alias);
 
-    if (link) {
-      await this.linkAnalyticService.createAnalyticForLink(request, link);
-    }
+    await this.linkAnalyticService.createAnalyticForLink(request, link);
 
     return link.longLink;
   }
@@ -81,7 +79,10 @@ export class LinkController {
   })
   @ApiResponse({ status: 404, description: 'Link not found.' })
   async update(@Param('id') id: string, @Body() updateLinkDto: UpdateLinkDto) {
+    const toBeUpdatedLink = await this.linksService.findOneById(+id);
     await this.linksService.updateLink(+id, updateLinkDto);
+
+    await this.cacheService.del(toBeUpdatedLink.alias);
   }
 
   @Delete(':id')

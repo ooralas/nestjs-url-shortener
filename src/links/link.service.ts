@@ -14,7 +14,9 @@ export class LinkService {
     @Inject(CacheService) private cacheService: CacheService,
   ) {}
   async create(createLinkDto: CreateLinkDto) {
-    const alias = this.generateAlias(+process.env.ALIAS_LENGTH);
+    const alias = createLinkDto.alias
+      ? createLinkDto.alias
+      : this.generateAlias(+process.env.ALIAS_LENGTH);
 
     const linkWithSameAlias = await this.linkRepository.findOne({
       where: [{ alias }, { longLink: createLinkDto.longLink }],

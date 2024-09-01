@@ -14,7 +14,10 @@ export class LinkAnalyticService {
     private linkAnalyticRepository: Repository<LinkAnalytic>,
     private geoLocationService: GeolocationService,
   ) {}
-  async createAnalyticForLink(@Req() linkRequest: Request, link: Link) {
+  async createAnalyticForLink(
+    @Req() linkRequest: Request,
+    link: Link,
+  ): Promise<void> {
     const clientIp: string = requestIp.getClientIp(linkRequest);
     const data: UAParser.IResult = UAParser(linkRequest.headers['user-agent']);
 

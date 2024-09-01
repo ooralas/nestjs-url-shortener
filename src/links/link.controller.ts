@@ -64,7 +64,17 @@ export class LinkController {
   async findOne(@Req() request: Request, @Param('alias') alias: string) {
     const link = await this.linksService.getLinkFromCacheOrDatabase(alias);
 
+<<<<<<< Updated upstream
     await this.linkAnalyticService.createAnalyticForLink(request, link);
+=======
+<<<<<<< Updated upstream
+    if (link) {
+      await this.linkAnalyticService.createAnalyticForLink(request, link);
+    }
+=======
+    this.linkAnalyticService.createAnalyticForLink(request, link);
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
     return link.longLink;
   }

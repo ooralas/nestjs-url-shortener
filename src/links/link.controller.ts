@@ -64,7 +64,9 @@ export class LinkController {
   async findOne(@Req() request: Request, @Param('alias') alias: string) {
     const link = await this.linksService.getLinkFromCacheOrDatabase(alias);
 
-    await this.linkAnalyticService.createAnalyticForLink(request, link);
+    if (link) {
+      this.linkAnalyticService.createAnalyticForLink(request, link);
+    }
 
     return link.longLink;
   }

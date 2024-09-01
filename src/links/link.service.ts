@@ -19,11 +19,9 @@ export class LinkService {
     const linkWithSameAlias = await this.linkRepository.findOne({
       where: [{ alias }, { longLink: createLinkDto.longLink }],
     });
-
     if (linkWithSameAlias) {
       return linkWithSameAlias;
     }
-
     createLinkDto.alias = alias;
     return await this.linkRepository.save(createLinkDto);
   }
@@ -40,16 +38,11 @@ export class LinkService {
     });
   }
 
-  async findOneByAliasAndUpdateViews(alias: string) {
+  async findOneByAlias(alias: string) {
     const link = await this.linkRepository.findOneBy({ alias });
-
     if (!link) {
       throw new NotFoundException();
     }
-
-    link.views++;
-
-    this.linkRepository.save(link);
     return link;
   }
 
@@ -91,16 +84,23 @@ export class LinkService {
   async getLinkFromCacheOrDatabase(alias: string): Promise<Link | null> {
     const cachedLink = await this.cacheService.get<Link>(alias);
     if (cachedLink) {
+      this.incrementLinkView(cachedLink);
       return cachedLink;
     }
 
-    const link = await this.findOneByAliasAndUpdateViews(alias);
+    const link = await this.findOneByAlias(alias);
     if (!link) {
       throw new NotFoundException('Link not found.');
     }
+    this.incrementLinkView(link);
 
     await this.cacheService.set(alias, link);
 
     return link;
+  }
+
+  incrementLinkView(link: Link): void {
+    link.views++;
+    this.linkRepository.save(link);
   }
 }

@@ -80,24 +80,10 @@ export class LinkService {
 
     return alias;
   }
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
 
   async getLinkFromCacheOrDatabase(alias: string): Promise<Link | null> {
     const cachedLink = await this.cacheService.get<Link>(alias);
     if (cachedLink) {
-<<<<<<< Updated upstream
-      return cachedLink;
-    }
-
-    const link = await this.findOneByAliasAndUpdateViews(alias);
-    if (!link) {
-      throw new NotFoundException('Link not found.');
-    }
-=======
       this.incrementLinkView(cachedLink);
       return cachedLink;
     }
@@ -107,19 +93,14 @@ export class LinkService {
       throw new NotFoundException('Link not found.');
     }
     this.incrementLinkView(link);
->>>>>>> Stashed changes
 
     await this.cacheService.set(alias, link);
 
     return link;
   }
-<<<<<<< Updated upstream
-=======
 
   incrementLinkView(link: Link): void {
     link.views++;
     this.linkRepository.save(link);
   }
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 }

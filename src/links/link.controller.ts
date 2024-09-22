@@ -39,6 +39,7 @@ export class LinkController {
   @ApiResponse({
     status: 201,
     description: 'The link has been successfully created.',
+    type: CreateLinkDto,
   })
   @ApiResponse({ status: 400, description: 'Invalid input data.' })
   create(@Body() createLinkDto: CreateLinkDto) {

@@ -5,12 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Link } from './entities/link.entity';
 import { LinkAnalyticModule } from 'src/link-analytic/link-analytic.module';
 import { GeolocationModule } from 'src/geolocation/geolocation.module';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Link]),
     LinkAnalyticModule,
     GeolocationModule,
+    UserModule,
   ],
   controllers: [LinkController],
   providers: [LinkService],

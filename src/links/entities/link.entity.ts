@@ -1,7 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsInt } from 'class-validator';
 import { LinkAnalytic } from 'src/link-analytic/entities/link-analytic.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Link {
@@ -33,4 +41,8 @@ export class Link {
 
   @OneToMany(() => LinkAnalytic, (linkAnalytic) => linkAnalytic.link)
   linkAnalytics: LinkAnalytic[];
+
+  @ManyToOne(() => User, (user) => user.links)
+  @JoinColumn({ name: 'user_id' })
+  userId: string;
 }

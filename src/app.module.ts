@@ -9,6 +9,7 @@ import { HealthModule } from './health/health.module';
 import { LinkAnalyticModule } from './link-analytic/link-analytic.module';
 import { GeolocationModule } from './geolocation/geolocation.module';
 import { CacheManagerModule } from './cache/cache.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { CacheManagerModule } from './cache/cache.module';
     LinkAnalyticModule,
     GeolocationModule,
     CacheManagerModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

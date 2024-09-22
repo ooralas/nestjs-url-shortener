@@ -6,14 +6,23 @@ import { Repository } from 'typeorm';
 import { Link } from './entities/link.entity';
 import { randomBytes } from 'crypto';
 import { CacheService } from 'src/cache/cache.service';
+import { UserService } from 'src/user/user.service';
+import { CreateLinkResponseDto } from './dto/create-link-response.dto';
 
 @Injectable()
 export class LinkService {
   constructor(
     @InjectRepository(Link) private linkRepository: Repository<Link>,
     @Inject(CacheService) private cacheService: CacheService,
+    @Inject(UserService) private userService: UserService,
   ) {}
-  async create(createLinkDto: CreateLinkDto) {
+  async create(createLinkDto: CreateLinkDto): Promise<CreateLinkResponseDto> {
+    let user = null;
+    if (createLinkDto.userId) {
+      user = await this.userService.findOne(createLinkDto.userId);
+      if (!user) throw new NotFoundException();
+    }
+
     const alias = createLinkDto.alias
       ? createLinkDto.alias
       : this.generateAlias(+process.env.ALIAS_LENGTH);
@@ -24,8 +33,13 @@ export class LinkService {
     if (linkWithSameAlias) {
       return linkWithSameAlias;
     }
-    createLinkDto.alias = alias;
-    return await this.linkRepository.save(createLinkDto);
+
+    const newLink = this.linkRepository.create({
+      ...createLinkDto,
+      alias,
+    });
+
+    return await this.linkRepository.save(newLink);
   }
 
   async findAll() {

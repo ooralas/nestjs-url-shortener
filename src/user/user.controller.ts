@@ -57,7 +57,7 @@ export class UserController {
   @ApiResponse({ status: 404, description: 'User not found.' })
   findOne(
     @Param('id') id: string,
-    @Query('includeLinks') includeLinks: Boolean = false,
+    @Query('includeLinks') includeLinks: boolean = false,
   ) {
     return this.userService.findOne(id, includeLinks);
   }

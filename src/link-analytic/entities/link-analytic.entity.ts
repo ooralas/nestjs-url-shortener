@@ -1,5 +1,4 @@
-import { Exclude } from 'class-transformer';
-import { IsInt, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 import { Link } from 'src/links/entities/link.entity';
 import {
   Column,

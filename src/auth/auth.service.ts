@@ -18,8 +18,6 @@ export class AuthService {
   ) {}
 
   async signup(signupData: SignupDataDTO) {
-    console.log('auth service ');
-
     const isEmailInUse = await this.userService.findOneByEmail(
       signupData.email,
     );

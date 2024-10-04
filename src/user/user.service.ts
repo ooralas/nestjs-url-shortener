@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -30,15 +35,22 @@ export class UserService {
     });
   }
 
-  async findOne(id: string, includeLinks: boolean = false) {
-    const result = await this.userRepository.findOne({
-      where: {
-        id,
-      },
-      relations: includeLinks ? ['link'] : [],
-    });
+  async findOne(
+    id: string,
+    includeLinks: boolean = false,
+    bypassException = true,
+  ) {
+    const result = id
+      ? await this.userRepository.findOne({
+          where: {
+            id,
+          },
+          relations: includeLinks ? ['links'] : [],
+        })
+      : null;
 
-    if (!result) throw new NotFoundException();
+    if (!result && !bypassException) throw new NotFoundException();
+
     return result;
   }
 
@@ -48,13 +60,26 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    const user = await this.findOne(id);
+    let user: User;
+    try {
+      user = await this.findOne(id);
+    } catch (error) {
+      Logger.error(error);
+    }
     if (!user) throw new NotFoundException();
 
     this.userRepository.update(id, updateUserDto);
   }
 
-  remove(id: string) {
-    return this.userRepository.softDelete(id);
+  async remove(id: string) {
+    try {
+      const result = await this.userRepository.softDelete(id);
+      if (result?.affected <= 0) {
+        throw new NotFoundException();
+      }
+    } catch (error) {
+      Logger.error(error);
+      throw new BadRequestException();
+    }
   }
 }

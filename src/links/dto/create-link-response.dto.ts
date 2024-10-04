@@ -19,7 +19,6 @@ export class CreateLinkResponseDto {
     example: 'c9f73353-dfd2-48d6-839e-6322033df9d7',
   })
   @Transform(({ obj }) => {
-    console.log(obj);
     return obj.user?.id;
   })
   userId?: string;

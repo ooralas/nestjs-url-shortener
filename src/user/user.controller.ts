@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
+  BadRequestException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,6 +22,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
+import { Roles } from 'src/common/decorators/roles.decorators';
+import { Role } from 'src/common/enums/role.enum';
+import { RolesGuard } from 'src/common/guards/roles/roles.guard';
 
 @ApiTags('user')
 @Controller('user')
@@ -67,7 +72,10 @@ export class UserController {
   @ApiParam({ name: 'id', required: true, type: String })
   @ApiResponse({ status: 200, description: 'User updated successfully' })
   @ApiResponse({ status: 404, description: 'User not found.' })
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    if (!id) throw new BadRequestException("Please provid user's id");
     return this.userService.update(id, updateUserDto);
   }
 
@@ -79,6 +87,8 @@ export class UserController {
     description: 'The user has been successfully deleted.',
   })
   @ApiResponse({ status: 404, description: 'User not found.' })
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
   }

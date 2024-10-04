@@ -1,3 +1,4 @@
+import { Role } from 'src/common/enums/role.enum';
 import { Link } from 'src/links/entities/link.entity';
 import {
   Column,
@@ -6,8 +7,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-
-export type UserRoleType = 'admin' | 'user';
 
 @Entity('user')
 export class User {
@@ -26,8 +25,8 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ type: 'enum', enum: ['user, admin'], default: 'user' })
-  role: UserRoleType = 'user';
+  @Column({ type: 'enum', enum: Role, default: Role.USER })
+  role: Role = Role.USER;
 
   @OneToMany(() => Link, (link) => link.userId)
   links: Link[];

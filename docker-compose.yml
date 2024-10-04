@@ -8,6 +8,7 @@ services:
       - postgres
     ports:
       - '3000:3000'
+      - '9229:9229'
     volumes:
       - ./src:/usr/src/app/src
       - ./api-documentation:/usr/src/app/api-documentation

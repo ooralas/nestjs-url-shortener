@@ -17,13 +17,4 @@ export class CreateLinkDto {
   @IsOptional()
   @IsString()
   alias?: string;
-
-  @ApiProperty({
-    description: 'Id of the user, who want to create a short url',
-    required: true,
-    example: 'sadasd-asdasd-asdas-dsadsad',
-  })
-  @IsString()
-  @IsOptional()
-  userId?: string;
 }

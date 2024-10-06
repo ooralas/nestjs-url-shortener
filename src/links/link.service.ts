@@ -1,4 +1,10 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,62 +22,84 @@ export class LinkService {
     @Inject(CacheService) private cacheService: CacheService,
     @Inject(UserService) private userService: UserService,
   ) {}
-  async create(createLinkDto: CreateLinkDto): Promise<CreateLinkResponseDto> {
+  async create(
+    userId: string,
+    createLinkDto: CreateLinkDto,
+  ): Promise<CreateLinkResponseDto> {
     let user = null;
-    if (createLinkDto.userId) {
-      user = await this.userService.findOne(createLinkDto.userId);
-      if (!user) throw new NotFoundException();
-    }
+
+    user = await this.userService.findOne(userId);
+    if (!user) throw new BadRequestException('User doest not exist');
 
     const alias = createLinkDto.alias
       ? createLinkDto.alias
       : this.generateAlias(+process.env.ALIAS_LENGTH);
 
-    const linkWithSameAlias = await this.linkRepository.findOne({
-      where: [{ alias }, { longLink: createLinkDto.longLink }],
+    const linkWithSameAliasOrLongLink = await this.linkRepository.findOne({
+      where: [
+        { userId, longLink: createLinkDto.longLink },
+        {
+          userId,
+          alias,
+        },
+      ],
     });
-    if (linkWithSameAlias) {
-      return linkWithSameAlias;
+
+    if (linkWithSameAliasOrLongLink) {
+      return linkWithSameAliasOrLongLink;
     }
 
     const newLink = this.linkRepository.create({
       ...createLinkDto,
       alias,
+      userId,
     });
 
     return await this.linkRepository.save(newLink);
   }
 
-  async findAll() {
-    return await this.linkRepository.find();
+  async findAll(userId: string) {
+    try {
+      const result = await this.linkRepository.find({
+        where: {
+          userId,
+        },
+      });
+
+      return result;
+    } catch (error) {
+      Logger.error(error);
+    }
   }
 
-  async findOneById(id: number) {
+  async findOneById(id: number, userId: string) {
     return await this.linkRepository.findOne({
       where: {
         id,
+        userId,
       },
     });
   }
 
-  async findOneByAlias(alias: string) {
-    const link = await this.linkRepository.findOneBy({ alias });
-    if (!link) {
-      throw new NotFoundException();
-    }
+  async findOneByAlias(alias: string, userId: string) {
+    const link = await this.linkRepository.findOneBy({ userId, alias });
     return link;
   }
 
-  async updateLink(id: number, updateLinkDto: UpdateLinkDto) {
+  async updateLink(id: number, updateLinkDto: UpdateLinkDto, userId: string) {
+    const toBeUpdatedLink = await this.findOneById(+id, userId);
     const result = await this.linkRepository.update(id, updateLinkDto);
+
     if (result.affected === 0) {
       throw new NotFoundException();
     }
-    return await this.findOneById(id);
+
+    this.cacheService.del(`${userId}:${toBeUpdatedLink.alias}`);
+    return await this.findOneById(id, userId);
   }
 
-  async remove(id: number) {
-    const result = await this.linkRepository.delete(id);
+  async remove(id: number, userId: string) {
+    const result = await this.linkRepository.delete({ id, userId });
     if (result.affected === 0) {
       throw new NotFoundException();
     }
@@ -97,20 +125,24 @@ export class LinkService {
     return alias;
   }
 
-  async getLinkFromCacheOrDatabase(alias: string): Promise<Link | null> {
-    const cachedLink = await this.cacheService.get<Link>(alias);
+  async getLinkFromCacheOrDatabase(
+    alias: string,
+    userId: string,
+  ): Promise<Link | null> {
+    const cachedLink = await this.cacheService.get<Link>(`${userId}:${alias}`);
+
     if (cachedLink) {
       this.incrementLinkView(cachedLink);
       return cachedLink;
     }
 
-    const link = await this.findOneByAlias(alias);
+    const link = await this.findOneByAlias(alias, userId);
     if (!link) {
       throw new NotFoundException('Link not found.');
     }
     this.incrementLinkView(link);
 
-    await this.cacheService.set(alias, link);
+    await this.cacheService.set(`${userId}:${alias}`, link);
 
     return link;
   }
@@ -118,5 +150,9 @@ export class LinkService {
   incrementLinkView(link: Link): void {
     link.views++;
     this.linkRepository.save(link);
+  }
+
+  getAllLinks() {
+    return this.linkRepository.find({});
   }
 }

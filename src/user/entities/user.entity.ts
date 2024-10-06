@@ -28,9 +28,9 @@ export class User {
   @Column({ type: 'enum', enum: Role, default: Role.USER })
   role: Role = Role.USER;
 
-  @OneToMany(() => Link, (link) => link.userId)
-  links: Link[];
-
   @DeleteDateColumn()
   deletedAt?: Date;
+
+  @OneToMany(() => Link, (link) => link.userId)
+  links: Link[];
 }

@@ -39,10 +39,13 @@ export class Link {
   @IsDate()
   createdAt: number;
 
+  @Column({ name: 'user_id' })
+  userId: string;
+
   @OneToMany(() => LinkAnalytic, (linkAnalytic) => linkAnalytic.link)
   linkAnalytics: LinkAnalytic[];
 
   @ManyToOne(() => User, (user) => user.links)
   @JoinColumn({ name: 'user_id' })
-  userId: string;
+  user: User;
 }

@@ -7,7 +7,7 @@ import { extractUserIdFromToken } from 'src/utils/token.utils';
 export class AuthGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<RequestWithUserId>();
     const authorizationHeader = request.headers.authorization;
 

@@ -1,0 +1,11 @@
+/* Globals, if any, can remain here, but avoid @apply for body directly */
+/* For example, custom font faces or very specific global utility adjustments */
+
+/* Ensure Tailwind base, components, and utilities are imported. */
+/* This is typically handled by @nuxtjs/tailwindcss module, so this file can be minimal */
+/* or even empty if all global styles are managed via Tailwind config or app.vue. */
+
+/* Keeping the transition for body, but this might be better applied via JS if body classes are changed dynamically */
+body {
+  transition: background-color 0.3s, color 0.3s;
+}

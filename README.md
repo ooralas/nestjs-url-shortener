@@ -100,3 +100,17 @@ If a different GeoLocation service is to be used, the `GEO_LOCATION_SERVICE_API_
 The project includes a flexible caching service designed to enhance performance during development and testing phases, utilizing an in-memory cache. Although Redis integration is planned for the future, the current implementation is prepared to accommodate Redis as a cache store with minimal changes, ensuring a seamless transition to a more robust and scalable caching solution when the project evolves into production environments.
 
 Configuration of the caching service is managed through environment variables, making it straightforward to adjust parameters such as the cache TTL (`CACHE_TTL`) and the maximum number of cache entries (`CACHE_MAX`). This flexibility ensures that the caching strategy can be optimized based on specific application needs and deployment environments.
+
+## Frontend
+
+A simple GUI built with Nuxt 3, Pinia and Tailwind CSS is available in the `frontend` directory. It provides authentication and link shortening features with support for dark and light themes.
+
+### Development
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The app expects the backend API to be running at `http://localhost:3000` by default. Set the `API_BASE` environment variable to override this value.
